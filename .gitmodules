@@ -1,0 +1,3 @@
+[submodule "Submodules/esp32-BrokerMQTT"]
+	path = Submodules/esp32-BrokerMQTT
+	url = https://github.com/pawelzim/esp32-BrokerMQTT.git
