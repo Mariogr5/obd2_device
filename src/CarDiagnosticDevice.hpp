@@ -1,7 +1,6 @@
 #include <string>
 #include "bluetooth.hpp"
 #include "localization.hpp"
-#include "gpio.hpp"
 #include <sstream>
 
 
@@ -32,15 +31,6 @@ class TelemetryDevice
 
     };
 
-    struct pid_frame
-    {
-        char pid_name[2];
-        char pid_value[2];
-    };
-
-    pid_frame icc_PDin;
-    pid_frame icc_PDout;
-
     public:
 
     car_datas diagnostic_datas;
@@ -48,10 +38,13 @@ class TelemetryDevice
     TelemetryDevice(int Car_id);
 
     void setup();
+    void setup_test();
     void task(int delay_time);
+    void task_test(int delay_time);
     void send_command(String command);
     void send_init_command();
     String receive_datas();
+    String receive_datas_test();
     int decode_PID_car_speed(String frame);
     float decode_PID_car_rpm(String frame);
     bool check_if_car_running(int car_rpm);

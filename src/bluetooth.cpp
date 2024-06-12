@@ -1,11 +1,18 @@
 #include "bluetooth.hpp"
 
-    BluetoothSerial SerialBT;
+   BluetoothSerial SerialBT;
+    //SerialBT.begin("esp_test" + char(id),true);
     void setup_bluetooth(int id) 
     {
         SerialBT.begin("esp_test" + char(id),true);
         SerialBT.setPin("1234");
-        set_gpios_high();
+        //set_gpios_high();
+    }
+
+    void setup_bluetooth_test(int id) 
+    {
+        SerialBT.begin("esp_test" + char(id));
+        SerialBT.setPin("1234");
     }
 
     void send_bluetooth_command(String PID)
@@ -38,37 +45,56 @@
             Serial.println(message);
             }
         }
-        // while(1)
-        // {
-        //     delay(1);
-        //     i++;
-        //     if(SerialBT.available())
-        //     {
-        //         message = SerialBT.readStringUntil('\r');
-        //         //message += SerialBT.readStringUntil('\n');
-        //         //message += SerialBT.readStringUntil('\n');
-        //         //Serial.println(message);
-        //         //if(message == "" || message == "BUS INIT: OK" )
-        //          //   continue;
-        //         //if (message == ">")
-        //         //    return ">";
-        //         break;
-        //     }
-        //     if(i == 300)
-        //     {
-        //         Serial.println("Nic nie odevrano");
-        //         //break;
-        //     }
+//     //     // while(1)
+//     //     // {
+//     //     //     delay(1);
+//     //     //     i++;
+//     //     //     if(SerialBT.available())
+//     //     //     {
+//     //     //         message = SerialBT.readStringUntil('\r');
+//     //     //         //message += SerialBT.readStringUntil('\n');
+//     //     //         //message += SerialBT.readStringUntil('\n');
+//     //     //         //Serial.println(message);
+//     //     //         //if(message == "" || message == "BUS INIT: OK" )
+//     //     //          //   continue;
+//     //     //         //if (message == ">")
+//     //     //         //    return ">";
+//     //     //         break;
+//     //     //     }
+//     //     //     if(i == 300)
+//     //     //     {
+//     //     //         Serial.println("Nic nie odevrano");
+//     //     //         //break;
+//     //     //     }
 
-        //     //Serial.println("Nic nie odebrano");
+//     //     //     //Serial.println("Nic nie odebrano");
 
-        // }
+//     //     // }
 
         if (message != "")
             return message;
         return "00 00";
     }
     
+
+    String receive_bluetooth_datas_test()
+    {
+        String message = "";
+        uint16_t i = 0;
+        //while (SerialBT.available()) {
+        while(1)
+        {
+            if(SerialBT.available()){
+            message += SerialBT.readStringUntil('\n');
+            Serial.println(message);
+            break;
+            }
+        }
+
+        if (message != "")
+            return message;
+        return "00 00";
+    }
 
     bool check_connection()
     {

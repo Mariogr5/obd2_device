@@ -8,6 +8,14 @@ void TelemetryDevice::setup()
     setup_bluetooth(car_id);
     setup_gps_module();
 }
+
+void TelemetryDevice::setup_test()
+{
+    setup_bluetooth_test(car_id);
+    setup_gps_module();
+}
+
+
 void TelemetryDevice::send_init_command()
 {
     send_command("ATI");
@@ -43,9 +51,46 @@ void TelemetryDevice:: task(int delay_time)
     diagnostic_datas.geographic_longitude = get_geographic_longitude();
 
 }  
+
+void TelemetryDevice:: task_test(int delay_time)
+{
+    send_command(CAR_SPEED);
+    delay(1000);
+    // String speed_frame = receive_datas_test();
+    int car_speed = decode_PID_car_speed(receive_datas_test());
+
+    send_command(CAR_RPM);
+    delay(1000);
+    // String rpm_frame = receive_datas_test();
+    int car_rpm = decode_PID_car_rpm(receive_datas_test());
+
+    send_command(FUEL_LEVEL);
+    delay(1000);
+    //  String fuel_frame = receive_datas_test();
+     int fuel_level = decode_PID_car_fuel_level(receive_datas_test());
+
+    track_localization();
+
+    Serial.println(car_speed);
+    diagnostic_datas.car_speed = car_speed;
+    diagnostic_datas.car_rpm = car_rpm;
+    diagnostic_datas.fuel_level = fuel_level;
+    diagnostic_datas.if_car_run = check_if_car_running(4);
+    diagnostic_datas.if_drive = check_if_car_driving(car_speed);
+    diagnostic_datas.if_idling = check_if_car_idling(4);
+    diagnostic_datas.geographic_latitude = get_geographic_latitude();
+    diagnostic_datas.geographic_longitude = get_geographic_longitude();
+
+}  
+
+
+
+
+
+
 void TelemetryDevice::send_command(String command)
 {
-    pid_frame frame;
+    // pid_frame frame;
 
     command += "\r";
     send_bluetooth_command(command);
@@ -57,8 +102,20 @@ String TelemetryDevice::receive_datas()
 
     return received_datas;
 }
-int TelemetryDevice::decode_PID_car_speed(String frame)
+
+String TelemetryDevice::receive_datas_test()
 {
+    String received_datas = receive_bluetooth_datas_test();
+
+
+    return received_datas;
+}
+
+
+
+int TelemetryDevice::decode_PID_car_speed(String frame)
+{   
+    Serial.println("Speed frame: " + frame);
     if(frame.length() < 8)
         return -999;
     int car_speed;
@@ -117,14 +174,4 @@ float TelemetryDevice::decode_PID_car_fuel_level(String frame)
 }
 
 /*
-
-Potrzebne dane:
--prędkość pojazdu - zrobione
--lokalizacja - elementy zamówione
--kierunke ruchu - jedna funkcja do napisania w zależności od lokalizacji - do dogadania z Maćkiem czy po stronie serwera
--Status: Zapłon , jazda(lub stanie), praca na biegu jałowym(najniższa możliwa prędkość obrotowa silnika czyli jazda na luzie) - zmienne True/False możliwe z wyczytania z funkcji
--Stan paliwa
--Odczyt licznika kilometrów(do obczajenia)
--Kody diagnostyczne 
-
 */
